@@ -7,7 +7,7 @@ import com.spring.exercises.model.User;
 
 public interface UserServices {
 
-	List<User> getUsers(int page, int limit);
+	List<UserDTO> getUsers(int page, int limit);
 
 	User getUser(Long id);
 

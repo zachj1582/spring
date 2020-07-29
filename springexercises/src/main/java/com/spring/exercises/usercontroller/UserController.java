@@ -1,5 +1,6 @@
 package com.spring.exercises.usercontroller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -34,11 +35,19 @@ public class UserController {
 
 	
 	@GetMapping
-	public List<User> getUsers(
+	public List<UserResponse> getUsers(
 			@RequestParam(value= "page", defaultValue = "1") int page, 
 			@RequestParam(value = "limit", defaultValue = "5") int limit){
-		List<User> users = userServices.getUsers(page, limit);
-		return users;
+		
+		List<UserDTO> userDTOList = userServices.getUsers(page, limit);
+		List<UserResponse> userResponseList = new ArrayList<UserResponse>();
+		
+		for(int i = 0; i < userDTOList.size(); i++) {
+			UserResponse userResponse = new UserResponse();
+			BeanUtils.copyProperties(userDTOList.get(i), userResponse);
+			userResponseList.add(userResponse);
+		}
+		return userResponseList;
 	}
 	
 	@GetMapping(path="/{id}")

@@ -28,18 +28,25 @@ public class UserServiceImplementation implements UserServices {
 	}
 
 	@Override
-	public List<User> getUsers(int page, int limit) {
-		List<User> users;
+	public List<UserDTO> getUsers(int page, int limit) {
+		List<User> users = new ArrayList<User>();
 		
 		if (page>0) page --;
 		PageRequest pageableRequest = PageRequest.of(page,  limit);
 		
-		Page<User> userPage = userRepository.findAll(pageableRequest);
+		Page<User> userPageList = userRepository.findAll(pageableRequest);
+
+		users = userPageList.getContent();
 		
-		users = userPage.getContent();
+		List<UserDTO> userDTOList = new ArrayList<UserDTO>();
 		
+		for (int i = 0; i < users.size(); i++) {
+			UserDTO userDTO = new UserDTO();
+			BeanUtils.copyProperties(users.get(i), userDTO);
+			userDTOList.add(userDTO);
+		}
 		
-		return users;
+		return userDTOList;
 	}
 
 	@Override
@@ -72,7 +79,7 @@ public class UserServiceImplementation implements UserServices {
 	@Override
 	public void updateUser(User user) {
 		ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
-		for (int i = 0; i<users.size(); i++) {
+		for (int i = 0; i < users.size(); i++) {
 			if (users.get(i).getId() == user.getId()) {
 				userRepository.save(user);
 			}
@@ -83,8 +90,6 @@ public class UserServiceImplementation implements UserServices {
 	public void deleteUser(Long id) {
 		userRepository.deleteById(id);
 	}
-	
-	
 }
 
 
