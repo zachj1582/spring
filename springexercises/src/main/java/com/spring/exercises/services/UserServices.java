@@ -2,6 +2,7 @@ package com.spring.exercises.services;
 
 import java.util.List;
 
+import com.spring.exercises.DTO.UserDTO;
 import com.spring.exercises.model.User;
 
 public interface UserServices {
@@ -10,7 +11,7 @@ public interface UserServices {
 
 	User getUser(Long id);
 
-	void createUser(User user);
+	UserDTO createUser(UserDTO userDTO);
 
 	void updateUser(User user);
 

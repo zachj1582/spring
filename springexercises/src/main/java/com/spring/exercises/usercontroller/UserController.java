@@ -2,6 +2,7 @@ package com.spring.exercises.usercontroller;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spring.exercises.DTO.UserDTO;
 import com.spring.exercises.model.User;
+import com.spring.exercises.model.request.UserRequest;
+import com.spring.exercises.model.response.UserResponse;
 import com.spring.exercises.services.UserServices;
 
 
@@ -50,8 +54,14 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public void createUser(@RequestBody User user) {
-		userServices.createUser(user);
+	public UserResponse createUser(@RequestBody UserRequest user) {
+		UserDTO userDTO = new UserDTO();
+		BeanUtils.copyProperties(user, userDTO);
+		UserDTO createdUser = userServices.createUser(userDTO);
+		UserResponse returnUser = new UserResponse();
+		BeanUtils.copyProperties(createdUser, returnUser);
+		
+		return returnUser;
 	}
 	
 	@PutMapping
