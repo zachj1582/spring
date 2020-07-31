@@ -1,5 +1,6 @@
 package com.spring.exercises.model.response;
 
+
 public class UserResponse {
 	
 	private String userId;

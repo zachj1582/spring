@@ -2,8 +2,6 @@ package com.spring.exercises.services.implementations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +30,7 @@ public class UserServiceImplementation implements UserServices {
 		List<User> users = new ArrayList<User>();
 		
 		if (page>0) page --;
-		PageRequest pageableRequest = PageRequest.of(page,  limit);
+		PageRequest pageableRequest = PageRequest.of(page, limit);
 		
 		Page<User> userPageList = userRepository.findAll(pageableRequest);
 
@@ -50,9 +48,11 @@ public class UserServiceImplementation implements UserServices {
 	}
 
 	@Override
-	public User getUser(Long id) {
-		Optional<User> user = userRepository.findById(id);
-		return user.get();
+	public UserDTO getUserByUserId(String userId) {
+		User user = userRepository.findByUserId(userId);
+		UserDTO returnValue = new UserDTO();
+		BeanUtils.copyProperties(user, returnValue);
+		return returnValue;
 	}
 	
 	@Override
@@ -77,18 +77,22 @@ public class UserServiceImplementation implements UserServices {
 	}
 
 	@Override
-	public void updateUser(User user) {
-		ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
-		for (int i = 0; i < users.size(); i++) {
-			if (users.get(i).getId() == user.getId()) {
-				userRepository.save(user);
-			}
-		}
+	public UserDTO updateUser(UserDTO userDTO) {
+		User foundUser = userRepository.findByUserId(userDTO.getUserId());
+		BeanUtils.copyProperties(userDTO, foundUser);
+		
+		User updatedUser = userRepository.save(foundUser);
+		
+		UserDTO returnValue = new UserDTO();
+		
+		BeanUtils.copyProperties(updatedUser, returnValue);
+		
+		return returnValue;
 	}
 
 	@Override
-	public void deleteUser(Long id) {
-		userRepository.deleteById(id);
+	public void deleteUser(String userId) {
+		userRepository.deleteByUserId(userId);
 	}
 }
 

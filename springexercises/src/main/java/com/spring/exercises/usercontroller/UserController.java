@@ -50,9 +50,11 @@ public class UserController {
 		return userResponseList;
 	}
 	
-	@GetMapping(path="/{id}")
-	public User getUser(@PathVariable Long id) {
-		User user = userServices.getUser(id);
+	@GetMapping(path="/{userId}")
+	public UserResponse getUserByUserId(@PathVariable String userId) {
+		UserDTO userDTO = userServices.getUserByUserId(userId);
+		UserResponse user = new UserResponse();
+		BeanUtils.copyProperties(userDTO, user);
 		return user;
 	}
 	
@@ -73,14 +75,23 @@ public class UserController {
 		return returnUser;
 	}
 	
-	@PutMapping
-	public void updateUser(@RequestBody User user) {
-		userServices.updateUser(user);
+	@PutMapping(path="/{userId}")
+	public UserResponse updateUser(@RequestBody UserRequest user, @PathVariable String userId) {
+		UserDTO userDTO = new UserDTO();
+		BeanUtils.copyProperties(user, userDTO);
+		userDTO.setUserId(userId);
+		
+		UserDTO updateUserDTO = userServices.updateUser(userDTO);
+		
+		UserResponse returnValue = new UserResponse();
+		BeanUtils.copyProperties(updateUserDTO, returnValue);
+		
+		return returnValue;
 	}
 	
-	@DeleteMapping(path="/{id}")
-	public void deleteUser(@PathVariable Long id) {
-		userServices.deleteUser(id);
+	@DeleteMapping(path="/{userId}")
+	public void deleteUser(@PathVariable String userId) {
+		userServices.deleteUser(userId);
 	}
 	
 }
