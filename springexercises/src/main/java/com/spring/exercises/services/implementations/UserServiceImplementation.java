@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.spring.exercises.DTO.UserDTO;
 import com.spring.exercises.dao.UserRepository;
+import com.spring.exercises.exceptions.UserNotFoundException;
 import com.spring.exercises.model.User;
 import com.spring.exercises.services.UserServices;
 import com.spring.exercises.shared.Utils;
@@ -49,10 +50,16 @@ public class UserServiceImplementation implements UserServices {
 
 	@Override
 	public UserDTO getUserByUserId(String userId) {
-		User user = userRepository.findByUserId(userId);
+		User foundUser = userRepository.findByUserId(userId);
 		UserDTO returnValue = new UserDTO();
-		BeanUtils.copyProperties(user, returnValue);
-		return returnValue;
+		if(foundUser == null) {
+			throw new UserNotFoundException("User Not Found");
+		}
+		else {
+					
+			BeanUtils.copyProperties(foundUser, returnValue);
+			return returnValue;
+		}
 	}
 	
 	@Override
@@ -94,13 +101,7 @@ public class UserServiceImplementation implements UserServices {
 
 	@Override
 	public void deleteUser(String userId) {
-		userRepository.deleteByUserId(userId);
+		User foundUser = userRepository.findByUserId(userId);
+		userRepository.delete(foundUser);
 	}
 }
-
-
-
-
-
-
-
